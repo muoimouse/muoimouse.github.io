@@ -77,22 +77,14 @@
                             </tr>
                             <tr>
                                 <th data-class="expand">Email</th>
-                                <th>Name</th>
+                                <th data-hide="phone,tablet">Name</th>
                                 <th data-hide="phone">Type</th>
                                 <th data-hide="phone,tablet">Start date</th>
                                 <th data-hide="phone">Image</th>
                                 <th data-hide="phone,tablet">Action</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>Tiger Nixon</td>
-                                <td>System Architect</td>
-                                <td>Edinburgh</td>
-                                <td>61</td>
-                                <td>2014/12/12</td>
-                                <td>$320,800</td>
-                            </tr>
+                            <tbody id="table-body">
                             </tbody>
 
                         </table>
@@ -113,39 +105,45 @@
 <script type="text/javascript">
     const api_url = "http://relax.xxx/api/user";
     const token = localStorage.getItem("token");
-
-    // $.ajaxPrefilter(function (options) {
-    //     if (options.crossDomain && jQuery.support.cors) {
-    //         var http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
-    //         options.url = http + '//relax.xxx/api/user' + options.url;
-    //     }
-    // });
-
+    const domain = "http://relax.xxx/static/";
     $.ajax({
         url: api_url,
-        // data: {},
-        type: "GET",
-        // cache: false,
-        // crossDomain: true,
-        // crossOrigin: true,
-        // dataType: "json",
-        // xhrFields: {
-        //     withCredentials: true
-        // },
+        // type: "GET",
+        method: "GET",
         headers: {
-            'Authorization': "JWT " + token,
-            "Content-Type" :"application/json;charset=utf-8",
-            // 'Access-Control-Allow-Origin': '*'
+            'Authorization': "JWT " + token
         },
-        // credentials: 'https://localhost:81',
-        // beforeSend: function (xhr) {
-        //     // chr.overrideMimeType()
-        //     xhr.setRequestHeader("Authorization", "JWT " + token)
-        // },
         success: function (results) {
-            console.log(results);
+            for(let item of results) {
+                let created = item.created.substring(0, item.created.indexOf("T"));
+                $("#table-body").append(
+                    `<tr>
+                        <td>${item.email}</td>
+                        <td>${item.name}</td>
+                        <td>${item.type}</td>
+                        <td>${created}</td>
+                        <td><img src="${domain}/${item.image}" style="max-width: 100px"></img></td>
+                        <td>
+                            <button class="edit btn btn-xs btn-default"><i class="fa fa fa-pencil"></i></button>
+                            <button class="remove btn btn-xs btn-default"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>`
+                );
+            }
         }
     });
+    $(document).on('click', '.edit', function () {
+        console.log('1111111111111');
+    });
+    $(document).ready(function () {
+        $(".edit").click(function () {
+            alert('aaaaaa')
+        })
+    });
+
+    // $("#table-body").hasClass("edit").click(function () {
+    //     alert('aaaaa');
+    // });
 
 
     /* DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -273,7 +271,7 @@
         });
 
         // custom toolbar
-        $("div.toolbar").html('<div class="text-right"><img src="img/logo.png" alt="SmartAdmin" style="width: 111px; margin-top: 3px; margin-right: 10px;"></div>');
+        // $("div.toolbar").html('<div class="text-right"><img src="img/logo.png" alt="SmartAdmin" style="width: 111px; margin-top: 3px; margin-right: 10px;"></div>');
 
         // Apply the filter
         $("#datatable_fixed_column thead th input[type=text]").on( 'keyup change', function () {

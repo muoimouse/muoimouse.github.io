@@ -1,10 +1,269 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<header>
+    <h2>Create User</h2>
+</header>
 
-</body>
-</html>
+<!-- widget div-->
+
+<div>
+    <!-- widget edit box -->
+    <div class="jarviswidget-editbox">
+        <!-- This area used as dropdown edit box -->
+        <input class="form-control" type="text">
+    </div>
+    <!-- end widget edit box -->
+
+    <!-- widget content -->
+    <div class="widget-body">
+
+        <form id="movieForm" method="post" enctype="multipart/form-data" >
+
+            <fieldset>
+                <legend>
+                    Create User
+                </legend>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="control-label">Email</label>
+                            <input type="email" class="form-control" name="email" />
+                        </div>
+
+                        <div class="col-md-4 selectContainer">
+                            <label class="control-label">Type</label>
+                            <select class="form-control" name="type">
+                                <option value="">Choose a type</option>
+                                <option value="admin">Admin</option>
+                                <option value="member">Member</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4">
+                            <label class="control-label">Name</label>
+                            <input type="text" class="form-control" name="name" />
+                        </div>
+
+                        <div class="col-sm-12 col-md-4">
+                            <label class="control-label">Password</label>
+                            <input type="password" class="form-control" name="password" />
+                        </div>
+
+                        <div class="col-sm-12 col-md-4">
+                            <label class="input input-file state-error">Image</label>
+                            <input type="file" id="image" class="form-control" name="image" />
+                        </div>
+
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" type="submit">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+    <!-- end widget content -->
+
+</div>
+<!-- end widget div -->
+<script type="text/javascript">
+    /* DO NOT REMOVE : GLOBAL FUNCTIONS!
+     *
+     * pageSetUp(); WILL CALL THE FOLLOWING FUNCTIONS
+     *
+     * // activate tooltips
+     * $("[rel=tooltip]").tooltip();
+     *
+     * // activate popovers
+     * $("[rel=popover]").popover();
+     *
+     * // activate popovers with hover states
+     * $("[rel=popover-hover]").popover({ trigger: "hover" });
+     *
+     * // activate inline charts
+     * runAllCharts();
+     *
+     * // setup widgets
+     * setup_widgets_desktop();
+     *
+     * // run form elements
+     * runAllForms();
+     *
+     ********************************
+     *
+     * pageSetUp() is needed whenever you load a page.
+     * It initializes and checks for all basic elements of the page
+     * and makes rendering easier.
+     *
+     */
+
+    pageSetUp();
+
+    /*
+    * ALL PAGE RELATED SCRIPTS CAN GO BELOW HERE
+    * eg alert("my home function");
+    *
+    * var pagefunction = function() {
+    *   ...
+    * }
+    * loadScript("js/plugin/_PLUGIN_NAME_.js", pagefunction);
+    *
+    * TO LOAD A SCRIPT:
+    * var pagefunction = function (){
+    *  loadScript(".../plugin.js", run_after_loaded);
+    * }
+    *
+    * OR you can load chain scripts by doing
+    *
+    * loadScript(".../plugin.js", function(){
+    * 	 loadScript("../plugin.js", function(){
+    * 	   ...
+    *   })
+    * });
+    */
+
+    // pagefunction
+
+    var pagefunction = function() {
+        // clears the variable if left blank
+
+        // movie form
+        $('#movieForm').bootstrapValidator({
+            feedbackIcons : {
+                valid : 'glyphicon glyphicon-ok',
+                invalid : 'glyphicon glyphicon-remove',
+                validating : 'glyphicon glyphicon-refresh'
+            },
+            fields : {
+                email : {
+                    group : '.col-md-8',
+                    validators : {
+                        notEmpty : {
+                            message : 'The email is required'
+                        },
+                        stringLength : {
+                            max : 200,
+                            message : 'The email must be less than 200 characters long'
+                        }
+                    }
+                },
+                type : {
+                    group : '.col-md-4',
+                    validators : {
+                        notEmpty : {
+                            message : 'The type is required'
+                        }
+                    }
+                },
+                name : {
+                    group : '.col-md-4',
+                    validators : {
+                        notEmpty : {
+                            message : 'The name is required'
+                        },
+                        stringLength : {
+                            min : 6,
+                            max : 30,
+                            message : 'The name must be less than 80 characters long'
+                        }
+                    }
+                },
+                password : {
+                    group : '.col-md-4',
+                    validators : {
+                        notEmpty : {
+                            message : 'The password is required'
+                        },
+                        stringLength : {
+                            min : 8,
+                            max : 16,
+                            message : 'The password must be more than 8 and less than 16 characters'
+                        }
+                    }
+                }
+            }
+        }).on('success.form.bv', function (e) {
+            let form = $(e.target);
+            let formData = new FormData();
+            let file = $("#image").prop('files')[0];
+            formData.append("image", file);
+            let data = $(form).serializeArray();
+            data.forEach(function (item) {
+                formData.append(item.name, item.value)
+            });
+            let token = localStorage.getItem("token");
+            $.ajax({
+                url: "http://relax.xxx/api/user",
+                contentType: false,
+                processData: false,
+                type: "POST",
+                data: formData,
+                headers: {
+                    "Authorization": "JWT " + token
+                },
+                success: function (response) {
+                    if (response.message && response.message === "SaveSuccessful") {
+                        console.log(response);
+                        return false;
+                    }
+                    console.log(response);
+                    return false;
+                }
+            });
+            return false;
+        });
+        // end movie form
+
+
+
+    };
+
+    // end pagefunction
+
+    // destroy generated instances
+    // pagedestroy is called automatically before loading a new page
+    // only usable in AJAX version!
+
+    var pagedestroy = function() {
+
+        /*
+         Example below:
+
+         $("#calednar").fullCalendar( 'destroy' );
+         if (debugState){
+         root.console.log("✔ Calendar destroyed");
+         }
+
+         For common instances, such as Jarviswidgets, Google maps, and Datatables, are automatically destroyed through the app.js loadURL mechanic
+
+         */
+
+        $('#movieForm').bootstrapValidator('destroy');
+
+        $('button[data-toggle]').off();
+
+        if (debugState) {
+            root.console.log("✔ Bootstrap validator destroyed");
+        }
+
+    };
+    // end destroy
+
+    // run pagefunction
+
+    loadScript("js/plugin/bootstrapvalidator/bootstrapValidator.min.js", pagefunction);
+
+</script>
