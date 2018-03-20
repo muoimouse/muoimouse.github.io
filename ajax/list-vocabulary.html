@@ -45,11 +45,11 @@
                             <thead>
                             <tr>
                                 <th class="hasinput" style="width:17%">
-                                    <input type="text" class="form-control" placeholder="Filter Email" />
+                                    <input type="text" class="form-control" placeholder="Filter Title" />
                                 </th>
                                 <th class="hasinput" style="width:18%">
                                     <!--<div class="input-group">-->
-                                        <input class="form-control" placeholder="Filter Name" type="text">
+                                        <input class="form-control" placeholder="Filter Spelling" type="text">
                                         <!--<span class="input-group-addon">-->
 												<!--<span class="onoffswitch">-->
 													<!--<input type="checkbox" name="start_interval" class="onoffswitch-checkbox" id="st3">-->
@@ -64,25 +64,20 @@
 
                                 </th>
                                 <th class="hasinput" style="width:16%">
-                                    <input type="text" class="form-control" placeholder="Filter Type" />
-                                </th>
-                                <th class="hasinput icon-addon">
-                                    <input id="dateselect_filter" type="text" placeholder="Filter Date" class="form-control datepicker" data-dateformat="yy/mm/dd">
-                                    <label for="dateselect_filter" class="glyphicon glyphicon-calendar no-margin padding-top-15" rel="tooltip" title="" data-original-title="Filter Date"></label>
+                                    <input type="text" class="form-control" placeholder="Filter Meaning" />
                                 </th>
                                 <th class="hasinput" style="width:17%">
-                                    <!--<input type="text" class="form-control" placeholder="Filter Age" />-->
+                                    <input type="text" class="form-control" placeholder="Filter Type" />
                                 </th>
                                 <th class="hasinput" style="width:16%">
                                     <!--<input type="text" class="form-control" placeholder="Filter Salary" />-->
                                 </th>
                             </tr>
                             <tr>
-                                <th data-class="expand">Email</th>
-                                <th data-hide="phone,tablet">Name</th>
+                                <th data-class="expand">Title</th>
+                                <th data-hide="phone,tablet">Spelling</th>
+                                <th data-hide="phone,tablet">Meaning</th>
                                 <th data-hide="phone">Type</th>
-                                <th data-hide="phone,tablet">Start date</th>
-                                <th data-hide="phone">Image</th>
                                 <th data-hide="phone,tablet">Action</th>
                             </tr>
                             </thead>
@@ -105,55 +100,49 @@
 
 
 <script type="text/javascript">
-    const api_url = "http://relax.xxx/api/user";
+    const api_url = "http://relax.xxx/api/vocabulary";
     const token = localStorage.getItem("token");
-    const domain = "http://relax.xxx/static/";
+    // const domain = "http://relax.xxx/static/";
     $( "#dialog-confirm" ).hide();
-
     $.ajax({
         url: api_url,
-        // type: "GET",
         method: "GET",
-        headers: {
-            'Authorization': "JWT " + token
-        },
+        // headers: {
+        //     'Authorization': "JWT " + token
+        // },
         success: function (results) {
             for(let item of results) {
-                let created = item.created.substring(0, item.created.indexOf("T"));
                 $("#table-body").append(
                     `<tr>
-                        <td>${item.email}</td>
-                        <td>${item.name}</td>
+                        <td>${item.title}</td>
+                        <td>${item.spelling}</td>
+                        <td>${item.meaning}</td>
                         <td>${item.type}</td>
-                        <td>${created}</td>
-                        <td><img src="${domain}/${item.image}" style="max-width: 100px"></img></td>
                         <td>
-                            <button class="edit btn btn-xs btn-default" onclick="editItem('${item.email}')"><i class="fa fa fa-pencil"></i></button>
-                            <button class="remove btn btn-xs btn-default" onClick="deleteItem('${item.email}')"><i class="fa fa-trash-o"></i></button>
+                            <button class="edit btn btn-xs btn-default" onClick="editItem('${item.title}')"><i class="fa fa fa-pencil"></i></button>
+                            <button class="remove btn btn-xs btn-default" onClick="deleteItem('${item.title}')"><i class="fa fa-trash-o"></i></button>
                         </td>
                     </tr>`
                 );
             }
         }
     });
-
-    function editItem(email) {
-        window.location.href = `index.html?email=${email}#ajax/create-user.html`;
+    function editItem(title) {
+        window.location.href = `index.html?title=${title}#ajax/create-vocabulary.html`;
         return true;
     }
-
-    function deleteItem(email) {
-        $("#dialog-confirm").dialog({
+    function deleteItem(title) {
+        $( "#dialog-confirm" ).dialog({
             resizable: false,
             height: "auto",
             width: 400,
             modal: true,
             buttons: {
-                "Delete item?": function () {
+                "Delete item?": function() {
                     $.ajax({
-                        url: "http://relax.xxx/api/user",
+                        url: "http://relax.xxx/api/vocabulary",
                         method: "DELETE",
-                        data: {email: email},
+                        data: { title: title },
                         headers: {
                             'Authorization': "JWT " + token
                         },
@@ -164,15 +153,19 @@
                             return false;
                         }
                     });
-                    $(this).dialog("close");
+                    $( this ).dialog( "close" );
                 },
-                Cancel: function () {
-                    $(this).dialog("close");
+                Cancel: function() {
+                    $( this ).dialog( "close" );
                 }
             }
         });
-    }
 
+    }
+    // $(document).on('click', '.edit', function () {
+    //     console.log()
+    //     window.location.href = "index.html?title=#ajax/create-vocabulary.html?a=b";
+    // });
     // $("#table-body").hasClass("edit").click(function () {
     //     alert('aaaaa');
     // });

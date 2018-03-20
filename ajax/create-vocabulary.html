@@ -23,17 +23,19 @@
                 </legend>
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-md-8">
-                            <label class="control-label">Email</label>
-                            <input type="email" class="form-control" name="email" />
+                        <div class="col-md-4">
+                            <label class="control-label">Title</label>
+                            <input type="text" class="form-control" name="title" />
                         </div>
 
                         <div class="col-md-4 selectContainer">
                             <label class="control-label">Type</label>
                             <select class="form-control" name="type">
                                 <option value="">Choose a type</option>
-                                <option value="admin">Admin</option>
-                                <option value="member">Member</option>
+                                <option value="nouns">nouns</option>
+                                <option value="adjectives">adjectives</option>
+                                <option value="adverbs">adverbs</option>
+                                <option value="verbs">verbs</option>
                             </select>
                         </div>
                     </div>
@@ -44,18 +46,13 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-sm-12 col-md-4">
-                            <label class="control-label">Name</label>
-                            <input type="text" class="form-control" name="name" />
+                            <label class="control-label">Spelling</label>
+                            <input type="text" class="form-control" name="spelling" />
                         </div>
 
                         <div class="col-sm-12 col-md-4">
-                            <label class="control-label">Password</label>
-                            <input type="password" class="form-control" name="password" />
-                        </div>
-
-                        <div class="col-sm-12 col-md-4">
-                            <label class="input input-file state-error">Image</label>
-                            <input type="file" id="image" class="form-control" name="image" />
+                            <label class="control-label">Meaning</label>
+                            <input type="text" class="form-control" name="meaning" />
                         </div>
 
                     </div>
@@ -80,6 +77,11 @@
 </div>
 <!-- end widget div -->
 <script type="text/javascript">
+
+
+
+    // var qs = window.location.search;
+
     /* DO NOT REMOVE : GLOBAL FUNCTIONS!
      *
      * pageSetUp(); WILL CALL THE FOLLOWING FUNCTIONS
@@ -138,27 +140,24 @@
     // pagefunction
 
     var pagefunction = function() {
-        // clears the variable if left blank
-        const params = new URL(window.location.href).searchParams;
-        const token = localStorage.getItem("token");
-        const email = params.get('email');
-        if (email) {
+        let params = new URL(window.location.href).searchParams;
+        let title = params.get('title');
+        if (title) {
             $.ajax({
-                url: "http://relax.xxx/api/user",
+                url: "http://relax.xxx/api/vocabulary",
                 method: "GET",
-                headers: {
-                    'Authorization': "JWT " + token
-                },
-                data: { email: email },
+                data: { title: title },
                 success: function(response) {
                     if (response) {
-                        $('input[name="email"]').val(email);
-                        $('input[name="name"]').val(response[0].name);
+                        $('input[name="title"]').val(title);
+                        $('input[name="spelling"]').val(response[0].spelling);
+                        $('input[name="meaning"]').val(response[0].meaning);
                         $('select[name="type"]').val(response[0].type);
                     }
                 }
             })
         }
+
         // movie form
         $('#movieForm').bootstrapValidator({
             feedbackIcons : {
@@ -167,15 +166,15 @@
                 validating : 'glyphicon glyphicon-refresh'
             },
             fields : {
-                email : {
-                    group : '.col-md-8',
+                title : {
+                    group : '.col-md-4',
                     validators : {
                         notEmpty : {
-                            message : 'The email is required'
+                            message : 'The title is required'
                         },
                         stringLength : {
-                            max : 200,
-                            message : 'The email must be less than 200 characters long'
+                            max : 50,
+                            message : 'The email must be less than 50 characters long'
                         }
                     }
                 },
@@ -187,56 +186,38 @@
                         }
                     }
                 },
-                name : {
+                spelling : {
                     group : '.col-md-4',
                     validators : {
                         notEmpty : {
-                            message : 'The name is required'
+                            message : 'The spelling is required'
                         },
-                        stringLength : {
-                            min : 6,
-                            max : 30,
-                            message : 'The name must be less than 80 characters long'
-                        }
                     }
                 },
-                password : email ? {} : {
+                meaning : {
                     group : '.col-md-4',
                     validators : {
                         notEmpty : {
-                            message : 'The password is required'
+                            message : 'The meaning is required'
                         },
-                        stringLength : {
-                            min : 8,
-                            max : 16,
-                            message : 'The password must be more than 8 and less than 16 characters'
-                        }
                     }
                 }
             }
         }).on('success.form.bv', function (e) {
             let form = $(e.target);
-            let formData = new FormData();
-            let file = $("#image").prop('files')[0];
-            if (file) {
-                formData.append("image", file);
-            }
-            let data = $(form).serializeArray();
-            data.forEach(function (item) {
-                formData.append(item.name, item.value)
-            });
+            let data = $(form).serialize();
+            console.log(data);
             let token = localStorage.getItem("token");
             $.ajax({
-                url: "http://relax.xxx/api/user",
-                contentType: false,
-                processData: false,
-                type: email ? "PUT" : "POST",
-                data: formData,
+                url: "http://relax.xxx/api/vocabulary",
+                method: title ? "PUT" : "POST",
+                data: data,
                 headers: {
-                    "Authorization": "JWT " + token
+                    "Authorization": "JWT " + token,
+                    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 success: function (response) {
-                    if (response.message && (response.message === "SaveSuccessful" || response.message === "UpdateSuccessful")) {
+                    if (response.message && response.message === "SaveSuccessful") {
                         window.location.reload();
                     }
                     return false;
