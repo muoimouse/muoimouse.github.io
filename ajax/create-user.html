@@ -223,6 +223,9 @@
             }
             let data = $(form).serializeArray();
             data.forEach(function (item) {
+                if (item.name === 'password' && item.value === '') {
+                    break;
+                }
                 formData.append(item.name, item.value)
             });
             let token = localStorage.getItem("token");
