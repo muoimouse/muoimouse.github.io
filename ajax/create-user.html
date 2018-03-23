@@ -224,9 +224,9 @@
             let data = $(form).serializeArray();
             data.forEach(function (item) {
                 if (item.name === 'password' && item.value === '') {
-                    break;
+                } else {
+                    formData.append(item.name, item.value)
                 }
-                formData.append(item.name, item.value)
             });
             let token = localStorage.getItem("token");
             $.ajax({
