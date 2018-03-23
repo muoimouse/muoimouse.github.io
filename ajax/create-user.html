@@ -15,7 +15,7 @@
     <!-- widget content -->
     <div class="widget-body">
 
-        <form id="movieForm" method="post" enctype="multipart/form-data" >
+        <form id="movieForm" method="post" enctype="multipart/form-data">
 
             <fieldset>
                 <legend>
@@ -137,20 +137,20 @@
 
     // pagefunction
 
-    var pagefunction = function() {
+    var pagefunction = function () {
         // clears the variable if left blank
         const params = new URL(window.location.href).searchParams;
         const token = localStorage.getItem("token");
         const email = params.get('email');
         if (email) {
             $.ajax({
-                url: "http://relax.xxx/api/user",
+                url: "https://shrouded-tor-99018.herokuapp.com/api/user",
                 method: "GET",
                 headers: {
                     'Authorization': "JWT " + token
                 },
                 data: { email: email },
-                success: function(response) {
+                success: function (response) {
                     if (response) {
                         $('input[name="email"]').val(email);
                         $('input[name="name"]').val(response[0].name);
@@ -161,55 +161,55 @@
         }
         // movie form
         $('#movieForm').bootstrapValidator({
-            feedbackIcons : {
-                valid : 'glyphicon glyphicon-ok',
-                invalid : 'glyphicon glyphicon-remove',
-                validating : 'glyphicon glyphicon-refresh'
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
             },
-            fields : {
-                email : {
-                    group : '.col-md-8',
-                    validators : {
-                        notEmpty : {
-                            message : 'The email is required'
+            fields: {
+                email: {
+                    group: '.col-md-8',
+                    validators: {
+                        notEmpty: {
+                            message: 'The email is required'
                         },
-                        stringLength : {
-                            max : 200,
-                            message : 'The email must be less than 200 characters long'
+                        stringLength: {
+                            max: 200,
+                            message: 'The email must be less than 200 characters long'
                         }
                     }
                 },
-                type : {
-                    group : '.col-md-4',
-                    validators : {
-                        notEmpty : {
-                            message : 'The type is required'
+                type: {
+                    group: '.col-md-4',
+                    validators: {
+                        notEmpty: {
+                            message: 'The type is required'
                         }
                     }
                 },
-                name : {
-                    group : '.col-md-4',
-                    validators : {
-                        notEmpty : {
-                            message : 'The name is required'
+                name: {
+                    group: '.col-md-4',
+                    validators: {
+                        notEmpty: {
+                            message: 'The name is required'
                         },
-                        stringLength : {
-                            min : 6,
-                            max : 30,
-                            message : 'The name must be less than 80 characters long'
+                        stringLength: {
+                            min: 6,
+                            max: 30,
+                            message: 'The name must be less than 80 characters long'
                         }
                     }
                 },
-                password : email ? {} : {
-                    group : '.col-md-4',
-                    validators : {
-                        notEmpty : {
-                            message : 'The password is required'
+                password: email ? {} : {
+                    group: '.col-md-4',
+                    validators: {
+                        notEmpty: {
+                            message: 'The password is required'
                         },
-                        stringLength : {
-                            min : 8,
-                            max : 16,
-                            message : 'The password must be more than 8 and less than 16 characters'
+                        stringLength: {
+                            min: 8,
+                            max: 16,
+                            message: 'The password must be more than 8 and less than 16 characters'
                         }
                     }
                 }
@@ -227,7 +227,7 @@
             });
             let token = localStorage.getItem("token");
             $.ajax({
-                url: "http://relax.xxx/api/user",
+                url: "https://shrouded-tor-99018.herokuapp.com/api/user",
                 contentType: false,
                 processData: false,
                 type: email ? "PUT" : "POST",
@@ -256,7 +256,7 @@
     // pagedestroy is called automatically before loading a new page
     // only usable in AJAX version!
 
-    var pagedestroy = function() {
+    var pagedestroy = function () {
 
         /*
          Example below:

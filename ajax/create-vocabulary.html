@@ -15,7 +15,7 @@
     <!-- widget content -->
     <div class="widget-body">
 
-        <form id="movieForm" method="post" enctype="multipart/form-data" >
+        <form id="movieForm" method="post" enctype="multipart/form-data">
 
             <fieldset>
                 <legend>
@@ -139,15 +139,15 @@
 
     // pagefunction
 
-    var pagefunction = function() {
+    var pagefunction = function () {
         let params = new URL(window.location.href).searchParams;
         let title = params.get('title');
         if (title) {
             $.ajax({
-                url: "http://relax.xxx/api/vocabulary",
+                url: "https://shrouded-tor-99018.herokuapp.com/api/vocabulary",
                 method: "GET",
                 data: { title: title },
-                success: function(response) {
+                success: function (response) {
                     if (response) {
                         $('input[name="title"]').val(title);
                         $('input[name="spelling"]').val(response[0].spelling);
@@ -160,45 +160,45 @@
 
         // movie form
         $('#movieForm').bootstrapValidator({
-            feedbackIcons : {
-                valid : 'glyphicon glyphicon-ok',
-                invalid : 'glyphicon glyphicon-remove',
-                validating : 'glyphicon glyphicon-refresh'
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
             },
-            fields : {
-                title : {
-                    group : '.col-md-4',
-                    validators : {
-                        notEmpty : {
-                            message : 'The title is required'
+            fields: {
+                title: {
+                    group: '.col-md-4',
+                    validators: {
+                        notEmpty: {
+                            message: 'The title is required'
                         },
-                        stringLength : {
-                            max : 50,
-                            message : 'The email must be less than 50 characters long'
+                        stringLength: {
+                            max: 50,
+                            message: 'The email must be less than 50 characters long'
                         }
                     }
                 },
-                type : {
-                    group : '.col-md-4',
-                    validators : {
-                        notEmpty : {
-                            message : 'The type is required'
+                type: {
+                    group: '.col-md-4',
+                    validators: {
+                        notEmpty: {
+                            message: 'The type is required'
                         }
                     }
                 },
-                spelling : {
-                    group : '.col-md-4',
-                    validators : {
-                        notEmpty : {
-                            message : 'The spelling is required'
+                spelling: {
+                    group: '.col-md-4',
+                    validators: {
+                        notEmpty: {
+                            message: 'The spelling is required'
                         },
                     }
                 },
-                meaning : {
-                    group : '.col-md-4',
-                    validators : {
-                        notEmpty : {
-                            message : 'The meaning is required'
+                meaning: {
+                    group: '.col-md-4',
+                    validators: {
+                        notEmpty: {
+                            message: 'The meaning is required'
                         },
                     }
                 }
@@ -209,7 +209,7 @@
             console.log(data);
             let token = localStorage.getItem("token");
             $.ajax({
-                url: "http://relax.xxx/api/vocabulary",
+                url: "https://shrouded-tor-99018.herokuapp.com/api/vocabulary",
                 method: title ? "PUT" : "POST",
                 data: data,
                 headers: {
@@ -217,7 +217,7 @@
                     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 success: function (response) {
-                    if (response.message && response.message === "SaveSuccessful") {
+                    if (response.message && (response.message === "SaveSuccessful" || response.message === "UpdateSuccessful")) {
                         window.location.reload();
                     }
                     return false;
@@ -237,7 +237,7 @@
     // pagedestroy is called automatically before loading a new page
     // only usable in AJAX version!
 
-    var pagedestroy = function() {
+    var pagedestroy = function () {
 
         /*
          Example below:
